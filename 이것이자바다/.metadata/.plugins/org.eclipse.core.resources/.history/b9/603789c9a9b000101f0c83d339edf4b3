@@ -1,0 +1,20 @@
+package ch03;
+
+public class Operator {
+
+	public static void main(String[] args) {
+		int x = 1;
+		System.out.println(x);
+		
+		int y = ++x;	// 전위 연산
+		System.out.println(y);
+		
+		int z = y++;
+		System.out.println(z);
+		
+		
+		
+		
+	}
+
+}
