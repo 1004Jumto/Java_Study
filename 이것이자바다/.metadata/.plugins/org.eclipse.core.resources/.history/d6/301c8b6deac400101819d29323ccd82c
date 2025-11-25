@@ -1,0 +1,10 @@
+package ch20.oracle;
+
+public class ConnectionEx {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

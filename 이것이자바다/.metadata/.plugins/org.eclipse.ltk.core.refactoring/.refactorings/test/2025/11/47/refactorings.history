@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;ch20.oracle.connectionEx&apos; to &apos;ConnectionEx&apos;&#x0D;&#x0A;- Original project: &apos;test&apos;&#x0D;&#x0A;- Original element: &apos;ch20.oracle.connectionEx&apos;&#x0D;&#x0A;- Renamed element: &apos;ch20.oracle.ConnectionEx&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;connectionEx&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;ch20.oracle{connectionEx.java[connectionEx" matchStrategy="1" name="ConnectionEx" qualified="false" references="true" similarDeclarations="false" stamp="1763516991699" textual="false" version="1.0"/>
+</session>

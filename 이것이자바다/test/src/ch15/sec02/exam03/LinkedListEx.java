@@ -3,13 +3,15 @@ package ch15.sec02.exam03;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class LinkedListEx {
 
 	public static void main(String[] args) {
 		List<String> arr = new ArrayList<>();
-		List<String> link = new LinkedList<>();
-
+		List<String> link = new LinkedList<>(); 
+		Queue<Integer> q = new LinkedList<>(); 
+		
 		// 시작과 끝 시간 저장
 		long startT, endT;
 

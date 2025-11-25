@@ -1,0 +1,301 @@
+package ch20.oracle.sec12;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class BoardExample3 {
+	private Scanner sc = new Scanner(System.in);
+	private Connection conn;
+	
+	public BoardExample3() {
+		try {
+			//JDBC등록 
+			//1. 드라이버 로드 
+			Class.forName("oracle.jdbc.OracleDriver");
+			
+			//2. 커넥션객체 생성 
+			conn = DriverManager.getConnection(
+					"jdbc:oracle:thin:@localhost:1521/xe",
+					"testuser", //사용자명
+					"test1234"); //비밀번호
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			exit();
+		}
+	}
+	
+	
+	public void list() {
+		System.out.println();
+		System.out.println("[게시물 목록]");
+		System.out.println("----------------------------------------------------------");
+		System.out.printf("%-6s%-12s%-16s%-40s\n","no","writer","date","title");
+		System.out.println("----------------------------------------------------------");
+		
+		//얘네를 다른 함수에서 공유해서 쓰는게 아니고, finally에서만 써주면 되기에 여기에 선언. 
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			String sql = "SELECT bno, btitle, bcontent, bwriter, bdate FROM boards ORDER BY bno DESC";
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				Board board = new Board();
+				board.setBno(rs.getInt("bno"));
+				board.setBtitle(rs.getString("btitle"));
+				board.setBcontent(rs.getString("bcontent"));
+				board.setBwriter(rs.getString("bwriter"));
+				board.setBdate(rs.getDate("bdate"));
+				
+				System.out.printf("%-6s%-12s%-16s%-40s\n",
+						board.getBno(),
+						board.getBwriter(),
+						board.getBdate(),
+						board.getBtitle());
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			exit();
+		}finally {
+			try {rs.close();} catch (SQLException e) {e.printStackTrace();}
+			try {pstmt.close();} catch (SQLException e) {e.printStackTrace();}
+		}
+		
+		mainMenu();
+		
+	}
+	
+	public void mainMenu() {
+		System.out.println();
+		System.out.println("----------------------------------------------------------");
+		System.out.println("메인 메뉴 : 1. Create | 2.Read | 3.Clear | 4.Exit ");
+		System.out.print("메뉴 선택 : ");
+		
+		String menuNo = sc.nextLine();
+		System.out.println();
+		
+		switch(menuNo) {
+		case "1"-> create();
+		case "2"-> read();
+		case "3"-> clear();
+		case "4"-> exit();
+		}
+		
+	}
+	
+	public void create() {
+		//입력받기 
+		Board board = new Board();
+		System.out.println("[새 게시물 입력]");
+		System.out.print("제목: ");
+		board.setBtitle(sc.nextLine());
+		System.out.print("내용: ");
+		board.setBcontent(sc.nextLine());
+		System.out.print("작성자: ");
+		board.setBwriter(sc.nextLine());
+		
+		System.out.println("----------------------------------------------------------");
+		System.out.println("보조메뉴: 1.0k | 2.Cancle");
+		System.out.print("메뉴 선택: ");
+		
+		String menuNo = sc.nextLine();
+		
+		if("1".equals(menuNo)) {
+			PreparedStatement pstmt =null;
+			//boards 테이블에 게ㅣ물 저장 
+			try {
+				String sql = "INSERT INTO boards (bno, btitle, bcontent, bwriter,bdate) "+
+						"VALUES(SEQ_BNO.NEXTVAL,?,?,?,SYSDATE )";
+				
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, board.getBtitle());
+				pstmt.setString(2, board.getBcontent());
+				pstmt.setString(3, board.getBwriter());
+				
+				pstmt.executeUpdate();
+				
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				exit();
+			}finally {
+				try {pstmt.close();} catch (SQLException e) {e.printStackTrace();}
+			}
+		}
+
+		list();
+	};
+	
+	public void read() {
+		System.out.println("[게시물 읽기]");
+		System.out.print("bno: ");
+		int bno = Integer.parseInt(sc.nextLine());
+		
+		PreparedStatement pstmt = null ;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT * FROM boards WHERE bno =?";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, bno);
+			
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				Board board = new Board();
+				board.setBno(rs.getInt("bno"));
+				board.setBtitle(rs.getString("btitle"));
+				board.setBcontent(rs.getString("bcontent"));
+				board.setBwriter(rs.getString("bwriter"));
+				board.setBdate(rs.getDate("bdate"));
+				
+				System.out.println("###################");
+				System.out.println("번호 : "+board.getBno());
+				System.out.println("제목 : "+board.getBtitle());
+				System.out.println("내용 : "+board.getBcontent());
+				System.out.println("작성자 : "+board.getBwriter());
+				System.out.println("날짜 : "+board.getBdate());
+				
+				System.out.println("----------------------------------------------------------");
+				System.out.println("보조메뉴: 1.update | 2.delete | 3.list");
+				System.out.print("메뉴 선택: ");
+				
+				String menuNo = sc.nextLine();
+				System.out.println();
+				
+				if("1".equals(menuNo)) {
+					update(board);
+				}else if("2".equals(menuNo)) {
+					delete(board);
+				}
+				
+				System.out.println("###################");
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			exit();
+		}finally {
+			try {rs.close();} catch (SQLException e) {e.printStackTrace();}
+			try {pstmt.close();} catch (SQLException e) {e.printStackTrace();}
+		}
+
+		list();
+	};
+	
+	public void update(Board board) {
+		System.out.println("[수정 내용 입력하기]");
+		System.out.print("제목: ");
+		board.setBtitle(sc.nextLine());
+		System.out.print("내용: ");
+		board.setBcontent(sc.nextLine());
+		System.out.print("작성자: ");
+		board.setBwriter(sc.nextLine());
+		
+		System.out.println("----------------------------------------------------------");
+		System.out.println("보조메뉴: 1.0k | 2.Cancle");
+		System.out.print("메뉴 선택: ");
+		
+		String menuNo = sc.nextLine();
+		
+		if("1".equals(menuNo)) {
+			PreparedStatement pstmt =null;
+			//boards 테이블에 게ㅣ물 저장 
+			try {
+				String sql = "UPDATE boards SET btitle=?, bcontent=?, bwriter=? WHERE bno=? ";
+				
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, board.getBtitle());
+				pstmt.setString(2, board.getBcontent());
+				pstmt.setString(3, board.getBwriter());
+				pstmt.setInt(4, board.getBno());
+				
+				pstmt.executeUpdate();
+				
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				exit();
+			}finally {
+				try {pstmt.close();} catch (SQLException e) {e.printStackTrace();}
+			}
+		}
+		
+	};
+	
+	public void delete(Board board) {
+		PreparedStatement pstmt =null;
+		//boards 테이블에 게ㅣ물 저장 
+		try {
+			String sql = "DELETE FROM boards WHERE bno=? ";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, board.getBno());
+			
+			pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			exit();
+		}finally {
+			try {pstmt.close();} catch (SQLException e) {e.printStackTrace();}
+		}
+	};
+	
+	public void clear() {
+		System.out.println("[게시물 전체 삭제]");
+		System.out.println("----------------------------------------------------------");
+		System.out.println("보조메뉴: 1.0k | 2.Cancle");
+		System.out.print("메뉴 선택: ");
+		
+		String menuNo = sc.nextLine();
+		
+		if("1".equals(menuNo)) {
+			PreparedStatement pstmt =null;
+			//boards 테이블에 게ㅣ물 저장 
+			try {
+				String sql = "TRUNCATE TABLE boards ";
+				
+				pstmt = conn.prepareStatement(sql);
+				pstmt.executeUpdate();
+				
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				exit();
+			}finally {
+				try {pstmt.close();} catch (SQLException e) {e.printStackTrace();}
+			}
+		}	
+		
+		list();
+	};
+	
+	public void exit() {
+		if(conn != null) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("***게시판 종료***");
+		System.exit(0);
+	};
+	
+	public static void main(String[] args) {
+		BoardExample3 boardExample = new BoardExample3();
+		boardExample.list();
+	}
+}
