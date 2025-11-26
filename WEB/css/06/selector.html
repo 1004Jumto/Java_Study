@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+    <title>Document</title>
+    <!--
+    선택자 - selector
+    - 문서내의 특정 영역(범위)를 선택
+    - 왜? 선택한 영역의 스타일 적용, 이벤트 적용, 크롤링
+
+    * 선택자 종류
+    - 전체 : *
+    - 태그
+    - 아이디 : #
+    - 클래스 : .
+    - 속성 : []
+    - 자식/자손 : > / 공백
+    - 다중 : 여러개(,) 동시에(공백없이)
+    - 가상클래스 (위치) : nth-child(n)
+    -->
+
+    <style>
+        /* 전체 선택자 */
+         
+        * {
+            color:blue;
+        } 
+        /* 태그 선택자 */
+    
+        h1 {
+            color:blue;
+        }
+        /* 
+        아이디 선택자 #
+        아이디는 문서내에서 하나만 존재
+        
+        #target {
+            color : blue;
+        }
+        */
+        /*
+        클래스 선택자 .
+        class는 문서내에서 여러개 존재
+        
+        .redColor {
+            color : red;
+        }
+        */
+        /*
+        속성 선택자 []
+        
+        input[type='text'] {
+            background-color: yellow;
+        }
+        */
+        /*
+        자식 : 바로 밑에 있는것 A > B : A 바로 밑에 B
+        자손 : 아래 있는 모든것 A B : A 밑에 있는 모든 B
+
+        div > span : div 바로 밑에 span
+        div span : div 밑에 모든 span
+        
+        div  span {
+            color : green;
+        }
+        */
+        /*
+        다중 (여러개 <-> 동시에)
+        A,B -> A랑 B랑
+        AB -> A이면서 B인것
+        
+        p.redColor {
+            color : aqua;
+        }
+        */
+        /*
+        가상 클래스 (위치)
+        몇번째 요소
+        */
+        li:nth-child(2) {
+            color:red;
+        }
+
+        p#target {
+            color :blue;
+        }
+        p {
+            color :#f00 !important;
+        }
+
+        * {
+            font-family:  "Nanum Gothic", sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="redColor">제목1</h1>
+    <p  class="redColor">내용 1</p>
+    <p id="target" style="color:brown">내용 2</p>
+    <p>내용 3</p>
+    <input type="text"><br>
+    <input type="password"><br>
+    <div>
+        <span>
+            안녕하세요
+        </span>
+        <p>
+            <span>반갑습니다.</span>
+        </p>
+    </div>
+    <span>안녕하세요</span>
+    <ul>
+        <li>후라이드치킨</li>
+        <li>양념치킨</li>
+        <li>마늘치킨</li>
+    </ul>
+</body>
+</html>
