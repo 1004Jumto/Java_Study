@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            width:100px;
+            height:100px;
+        }
+        #box1 {
+            /* 
+            자식이 position:absolute 적용하려면(좌표값을 부모의 기준으로 지정)
+            부모가 position:relative, height 값 지정 
+            */
+            position:absolute;
+            background-color: red;
+            left:0;
+            top:0;
+            z-index:999999;
+        }
+        #box2 {
+            position:absolute;
+            background-color: orange;
+            left:10px;
+            top : 10px;
+            z-index:2;
+        }
+        #box3 {
+            position:absolute;
+            background-color: yellow;
+            left:20px;
+            top:20px;
+            z-index:1;
+        }
+        #wrap {
+            height:100px;
+            width:300px;
+            position: relative;
+            /* 넘치는 부분 숨기기 */
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>헤더</h1>
+    <div id="wrap">
+        <div id="box1"></div>
+        <div id="box2"></div>
+        <div id="box3"></div>
+    </div>
+    <h1>푸터</h1>
+</body>
+</html>
